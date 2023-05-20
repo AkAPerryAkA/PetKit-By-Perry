@@ -7,8 +7,8 @@ import locale
 import pytz
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode
-from .const import DOMAIN, API_SERVERS
+from .Core import getCountryCode, sendRequest
+from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
@@ -22,6 +22,9 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 return self.async_create_entry(...)
 
             errors["base"] = "auth_error"
+
+        for CountryCode in sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS):
+            API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
         
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
