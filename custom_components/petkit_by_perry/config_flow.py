@@ -12,6 +12,8 @@ from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     def __init__(self, hass: HomeAssistant, config: dict):
+        self._config = config
+        self.hass = hass
         self.http = aiohttp_client.async_create_clientsession(hass, auto_cleanup=False)
 
     async def async_step_user(self, user_input=None):
