@@ -1,7 +1,8 @@
-from homeassistant import config_entries, core
+# MODULE IMPORT #
+from homeassistant import config_entries
 import voluptuous as vol
+# VARIABLE/DEFINITION IMPORT #
 from .const import DOMAIN
-from homeassistant.helpers.selector import selector
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):

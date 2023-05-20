@@ -1,3 +1,6 @@
+import datetime
+import requests
+
 def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     if Token != None:
         if Account._Token_Expires > datetime.now():

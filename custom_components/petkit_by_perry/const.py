@@ -1,3 +1,5 @@
+from datetime import timedelta
+
 API_LOGIN_PATH = "user/login"
 API_DEVICES_PATH = "discovery/device_roster"
 API_DEVICE_DETAILS = "/owndevices"

@@ -11,7 +11,6 @@ import tzlocal
 import copy
 import logging
 import hashlib
-import datetime
 from homeassistant.core import HomeAssistant
 from homeassistant import config_entries
 from homeassistant.const import *
