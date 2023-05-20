@@ -40,9 +40,9 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None
     await result
     if list(result.json().keys())[0] == 'result':
         if list(result.json()['result'])[0] == 'list':
-            return result.json()['result']['list']
+            return await result.json()['result']['list']
         else:
-            return result.json()['result']
+            return await result.json()['result']
     elif list(result.json().keys())[0] == 'error':
         raise ValueError(result.json()['error']['msg'])
     else:
