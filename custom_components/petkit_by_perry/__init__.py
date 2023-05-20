@@ -1,5 +1,5 @@
 from .Core import *
-from .Config import *
+from .config_flow import *
 from .Account import *
 from .Device import *
 
