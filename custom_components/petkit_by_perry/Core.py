@@ -9,7 +9,7 @@ def getCountryCode(TimeZone):
                 return countrycode
     return next(iter(country_timezones))
 
-def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
+async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     if Token != None:
         if Account._Token_Expires > datetime.now():
             Account.getToken
