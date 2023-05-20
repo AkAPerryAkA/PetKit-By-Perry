@@ -1,7 +1,8 @@
 # MODULE IMPORT #
 from homeassistant import config_entries
 from homeassistant.core import HomeAssistant
-from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType, aiohttp_client
+from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
+from homeassistant.helpers import aiohttp_client
 import voluptuous as vol
 import tzlocal
 from pytz import country_timezones
