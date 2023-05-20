@@ -1,5 +1,13 @@
 import datetime
 import requests
+from pytz import country_timezones
+
+def getCountryCode(TimeZone):
+    for countrycode in country_timezones:
+        for timezone in country_timezones[countrycode]:
+            if timezone == TimeZone:
+                return countrycode
+    return next(iter(country_timezones))
 
 def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     if Token != None:

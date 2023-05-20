@@ -2,6 +2,7 @@
 from homeassistant import config_entries
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 import voluptuous as vol
+import tzlocal
 # VARIABLE/DEFINITION IMPORT #
 from .const import DOMAIN
 
@@ -13,8 +14,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
                 vol.Required('Password'): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
-                vol.Required("Country"): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT, autocomplete="country")),
-                vol.Required("TimeZone"): TextSelector(TextSelectorConfig(type=TextSelectorType.TEL, autocomplete="timezone")),
+                vol.Optional("Country Code", default=getCountryCode(str(tzlocal.get_localzone()))): TextSelector(TextSelectorConfig(type=TextSelectorType.TEXT)),
             }
         )
 
