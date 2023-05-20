@@ -13,6 +13,7 @@ import logging
 import hashlib
 import datetime
 from homeassistant.core import HomeAssistant
+from homeassistant import config_entries
 from homeassistant.const import *
 from homeassistant.components import persistent_notification
 from homeassistant.helpers import aiohttp_client
@@ -25,6 +26,7 @@ from homeassistant.helpers.update_coordinator import (
 import homeassistant.helpers.config_validation as cv
 from asyncio import TimeoutError
 from aiohttp import ClientConnectorError, ContentTypeError
+import voluptuous as vol
 
 # STATIC VALUES #
 API_LOGIN_PATH = "user/login"
