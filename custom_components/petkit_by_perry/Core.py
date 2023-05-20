@@ -29,12 +29,12 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None
     })
     if Param == None:
         try:
-            Result = requests.post(URL, headers=Header)
+            Result = await requests.post(URL, headers=Header, timeout=(2, 5))
         except ValueError as e:
             raise e
     else:
         try:
-            Result = requests.post(URL, data=Param, headers=Header)
+            Result = await requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
         except ValueError as e:
             raise e
     if list(Result.json().keys())[0] == 'result':
