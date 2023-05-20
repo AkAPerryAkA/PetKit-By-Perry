@@ -1,8 +1,7 @@
 # MODULE IMPORT #
-from homeassistant import config_entries
-from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
+from homeassistant import HomeAssistant, config_entries
+from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType, aiohttp_client
 import voluptuous as vol
-import requests
 import tzlocal
 import locale
 import pytz
@@ -12,6 +11,9 @@ from .Core import getCountryCode, sendRequest
 from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
+    def __init__(self, hass: HomeAssistant, config: dict):
+        self.http = aiohttp_client.async_create_clientsession(hass, auto_cleanup=False)
+
     async def async_step_user(self, user_input=None):
         # Specify items in the order they are to be displayed in the UI
         errors = {}
@@ -25,7 +27,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             errors["base"] = "auth_error"
         
         API_SERVERS.clear()
-        for CountryCode in (await requests.post(API_REGION_SERVERS, timeout=(2, 5))):
+        for CountryCode in (await self.http.request('GET', API_REGION_SERVERS)):
             API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
         
         STEP_USER_DATA_SCHEMA = vol.Schema(
