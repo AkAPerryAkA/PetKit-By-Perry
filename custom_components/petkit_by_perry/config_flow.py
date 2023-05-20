@@ -1,5 +1,6 @@
 # MODULE IMPORT #
 from homeassistant import config_entries
+from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 import voluptuous as vol
 # VARIABLE/DEFINITION IMPORT #
 from .const import DOMAIN
