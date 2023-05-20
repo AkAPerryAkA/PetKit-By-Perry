@@ -27,22 +27,6 @@ import homeassistant.helpers.config_validation as cv
 from asyncio import TimeoutError
 from aiohttp import ClientConnectorError, ContentTypeError
 import voluptuous as vol
-
-# STATIC VALUES #
-API_LOGIN_PATH = "user/login"
-API_DEVICES_PATH = "discovery/device_roster"
-API_DEVICE_DETAILS = "/owndevices"
-API_DEVICE_ACTIONS = "/controlDevice"
-API_REGION_SERVERS = "https://passport.petkt.com/v1/regionservers"
-API_SCAN_INTERVAL = datetime.timedelta(minutes=2)
-DOMAIN = "petkit_by_perry"
-SUPPORTED_DOMAINS = [
-    'sensor',
-    'binary_sensor',
-    'switch',
-    'select',
-]
-
 def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     if Token != None:
         if Account._Token_Expires > datetime.now():
