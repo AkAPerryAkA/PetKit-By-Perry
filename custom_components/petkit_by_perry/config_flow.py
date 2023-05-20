@@ -1,5 +1,6 @@
 # MODULE IMPORT #
-from homeassistant import HomeAssistant, config_entries
+from homeassistant import config_entries
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType, aiohttp_client
 import voluptuous as vol
 import tzlocal
