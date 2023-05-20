@@ -11,8 +11,7 @@ from .Core import getCountryCode
 from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
-    def __init__(self, hass: HomeAssistant, config: dict):
-        self._config = config
+    def __init__(self, hass = HomeAssistant):
         self.hass = hass
         self.http = aiohttp_client.async_create_clientsession(hass, auto_cleanup=False)
 
