@@ -33,6 +33,9 @@ from .config_flow import *
 from .Account import *
 from .Device import *
 
+for CountryCode in sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS)["list"]:
+    API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
+
 def setup(hass, config):
     """Set up is called when Home Assistant is loading our component."""
     
