@@ -4,11 +4,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType, aiohttp_client
 import voluptuous as vol
 import tzlocal
-import locale
-import pytz
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode, sendRequest
+from .Core import getCountryCode
 from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
