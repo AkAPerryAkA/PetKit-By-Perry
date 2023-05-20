@@ -1,5 +1,6 @@
 {
     "name": "Petkit By Perry",
+    "domains": ["petkit_by_perry"],
     "render_readme": true,
     "iot_class": "Cloud Polling"
 }
