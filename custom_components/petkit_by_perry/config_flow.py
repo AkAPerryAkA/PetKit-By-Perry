@@ -4,7 +4,8 @@ from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, Tex
 import voluptuous as vol
 import tzlocal
 # VARIABLE/DEFINITION IMPORT #
-from .const import DOMAIN
+from .Core import *
+from .const import *
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
