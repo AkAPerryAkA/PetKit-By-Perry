@@ -2,6 +2,7 @@
 from homeassistant import config_entries
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 import voluptuous as vol
+import requests
 import tzlocal
 import locale
 import pytz
@@ -23,8 +24,8 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
 
             errors["base"] = "auth_error"
         
-        API_SERVERS = []
-        for CountryCode in (await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS)):
+        API_SERVERS.clear()
+        for CountryCode in (await requests.post(API_REGION_SERVERS, timeout=(2, 5))):
             API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
         
         STEP_USER_DATA_SCHEMA = vol.Schema(
