@@ -29,7 +29,6 @@ class PetKitConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 self.data[CONF_REPOS] = []
                 # Return the form of the next step.
                 return await self.async_step_repo()
-
         return self.async_show_form(
             step_id="user", data_schema=AUTH_SCHEMA, errors=errors
         )
