@@ -4,10 +4,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 from homeassistant.helpers import aiohttp_client
 import voluptuous as vol
+import locale
+import pytz
 import tzlocal
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode
+from .Core import getCountryCode, sendRequest
 from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
@@ -28,7 +30,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             errors["base"] = "auth_error"
         
         API_SERVERS.clear()
-        for CountryCode in (await self.http.request('GET', API_REGION_SERVERS)):
+        for CountryCode in (await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None)):
             API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
         
         STEP_USER_DATA_SCHEMA = vol.Schema(
