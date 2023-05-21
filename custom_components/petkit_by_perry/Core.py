@@ -5,9 +5,10 @@ import locale
 import aiohttp
 import re
 from datetime import datetime, timedelta
+from babel import Locale
 from pytz import country_timezones
 
-from .const import API_REGION_SERVERS, API_SERVERS, API_LOCALE, API_SERVER, API_LOGIN_PATH
+from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY
 
 def getCountryCode(TimeZone):
     for countrycode in country_timezones:
@@ -17,18 +18,20 @@ def getCountryCode(TimeZone):
     return next(iter(country_timezones))
 
 async def getAPILocale():
-    API_LOCALE.clear()
+    API_LANGUAGE.clear()
     for CountryCode in list(dict(API_SERVERS).keys()):
         for Language in list(dict(locale.locale_alias).keys()):
             if re.search(CountryCode, Language, re.IGNORECASE) and re.search("^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$", Language, re.IGNORECASE):
-                API_LOCALE.append(Language.replace('_', '-').upper())
+                API_LANGUAGE.append(Locale(Language.replace('_', '-').upper()).get_display_name('en_US'), Language.replace('_', '-').upper())
                 break
 
 async def getAPIServers():
     result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, None)
     API_SERVERS.clear()
+    API_COUNTRY.clear()
     for CountryCode in result:
         API_SERVERS.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[1]])
+        API_COUNTRY.append(list(CountryCode.values())[3], list(CountryCode.values())[2].upper())
 
 async def getAPIToken(Username, Password, Language, CountryCode, TimeZone):
     TimeZone = pytz.timezone(TimeZone)
