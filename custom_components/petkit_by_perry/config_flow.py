@@ -7,6 +7,7 @@ import voluptuous as vol
 import locale
 import pytz
 import tzlocal
+import asyncio
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, sendRequest
@@ -24,9 +25,10 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 return self.async_create_entry(...)
 
             errors["base"] = "auth_error"
-        
+        getServers = asyncio.create_task(sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None))
+        await getServers
         API_SERVERS.clear()
-        for CountryCode in sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None):
+        for CountryCode in getServers:
             API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
         
         STEP_USER_DATA_SCHEMA = vol.Schema(
