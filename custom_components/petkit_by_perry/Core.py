@@ -31,7 +31,7 @@ async def getAPIServers():
     API_COUNTRY.clear()
     for CountryCode in result:
         API_SERVERS.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[1]])
-        API_COUNTRY.append(list(CountryCode.values())[3], list(CountryCode.values())[2].upper())
+        API_COUNTRY.append([list(CountryCode.values())[3], list(CountryCode.values())[2].upper()])
 
 async def getAPIToken(Username, Password, Language, CountryCode, TimeZone):
     TimeZone = pytz.timezone(TimeZone)
