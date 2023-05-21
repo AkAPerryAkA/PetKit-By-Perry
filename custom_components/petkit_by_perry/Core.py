@@ -16,7 +16,8 @@ def getCountryCode(TimeZone):
                 return countrycode.upper()
     return next(iter(country_timezones))
 
-def getLocale():
+async def getLocale():
+    API_LOCALE.clear()
     for CountryCode in list(dict(API_SERVERS).keys()):
         for Language in list(dict(locale.locale_alias).keys()):
             if re.search(CountryCode, Language, re.IGNORECASE) and re.search("^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$", Language, re.IGNORECASE):
