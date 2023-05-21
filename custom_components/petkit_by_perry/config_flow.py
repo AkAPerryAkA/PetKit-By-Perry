@@ -13,10 +13,6 @@ from .Core import getCountryCode, sendRequest
 from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
-    def __init__(self, hass = HomeAssistant):
-        self.hass = hass
-        self.http = aiohttp_client.async_create_clientsession(hass, auto_cleanup=False)
-
     async def async_step_user(self, user_input=None):
         # Specify items in the order they are to be displayed in the UI
         errors = {}
