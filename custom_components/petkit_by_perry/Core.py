@@ -9,7 +9,7 @@ def getCountryCode(TimeZone):
                 return countrycode
     return next(iter(country_timezones))
 
-async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
+def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     if Token is not None:
         if Account._Token_Expires > datetime.now():
             Account.getToken
@@ -29,19 +29,19 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None
     })
     if Param is None:
         try:
-            result = await requests.post(URL, headers=Header, timeout=(2, 5))
+            result = requests.post(URL, headers=Header, timeout=(2, 5))
         except ValueError as error:
             raise error
     else:
         try:
-            result = await requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
+            result = requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
         except ValueError as error:
             raise error
     if list(result.json().keys())[0] == 'result':
         if list(result.json()['result'])[0] == 'list':
-            return await result.json()['result']['list']
+            return result.json()['result']['list']
         else:
-            return await result.json()['result']
+            return result.json()['result']
     elif list(result.json().keys())[0] == 'error':
         raise ValueError(result.json()['error']['msg'])
     else:
