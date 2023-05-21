@@ -1,0 +1,15 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "PetKit",
+                "data": {
+                    "Username": "Username",
+                    "Password": "Password",
+                    "Country Code": "Country Code",
+                    "Timezone": "Timezone"
+                }
+            }
+        }
+    }
+}

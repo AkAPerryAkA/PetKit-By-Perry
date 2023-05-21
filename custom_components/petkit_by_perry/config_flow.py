@@ -1,15 +1,13 @@
 # MODULE IMPORT #
 from homeassistant import config_entries
-from homeassistant.core import HomeAssistant
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
-from homeassistant.helpers import aiohttp_client
 import voluptuous as vol
 import tzlocal
-import asyncio
+import locale
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, getAPIServers
-from .const import DOMAIN, API_SERVERS
+from .const import DOMAIN, API_SERVERS, API_LOGIN_PATH, API_SERVER, API_LOCALE
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
@@ -17,7 +15,8 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         errors = {}
         if user_input is not None:
             # Validate user input
-            valid = await is_valid(user_input)
+            #valid = await is_valid(user_input)
+            
             if valid:
                 # See next section on create entry usage
                 return self.async_create_entry(...)
@@ -28,8 +27,9 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
                 vol.Required('Password'): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
-                vol.Optional("Country Code", default=getCountryCode(str(tzlocal.get_localzone()))): vol.In(list(dict(country_timezones.items()).keys())),
-                vol.Optional("Timezone", default=str(tzlocal.get_localzone())): vol.In(list(dict(API_SERVERS).keys())),
+                vol.Required("Language", default=str(locale.getdefaultlocale()[0]).upper()): vol.In(list(dict(API_LOCALE).keys()).sort()),
+                vol.Required("Country Code", default=getCountryCode(str(tzlocal.get_localzone())).upper()): vol.In(list(dict(API_SERVERS).keys()).sort()),
+                vol.Required("Timezone", default=str(tzlocal.get_localzone()).upper()): vol.In(list(dict(country_timezones.items()).values()).sort()),
             }
         )
 
