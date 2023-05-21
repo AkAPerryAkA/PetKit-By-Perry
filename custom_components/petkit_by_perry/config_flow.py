@@ -6,6 +6,7 @@ from homeassistant.helpers import aiohttp_client
 import voluptuous as vol
 import locale
 import pytz
+import requests
 import tzlocal
 import asyncio
 from pytz import country_timezones
@@ -25,7 +26,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 return self.async_create_entry(...)
 
             errors["base"] = "auth_error"
-        getServers = asyncio.create_task(sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None))
+        getServers = asyncio.create_task(requests.post(API_REGION_SERVERS, timeout=(2, 5)))
         await getServers
         API_SERVERS.clear()
         for CountryCode in getServers:
