@@ -23,7 +23,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 return self.async_create_entry(...)
 
             errors["base"] = "auth_error"
-        asyncio.run(getAPIServers())
+        await getAPIServers()
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
