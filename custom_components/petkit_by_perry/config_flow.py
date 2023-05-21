@@ -28,9 +28,9 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
                 vol.Required('Password'): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
-                vol.Required("Language", default=str(locale.getdefaultlocale()[0]).upper()): vol.In(list(API_LOCALE).sort()),
-                vol.Required("Country Code", default=getCountryCode(str(tzlocal.get_localzone())).upper()): vol.In(list(dict(API_SERVERS).keys()).sort()),
-                vol.Required("Timezone", default=str(tzlocal.get_localzone()).upper()): vol.In(list(dict(country_timezones.items()).values()).sort()),
+                vol.Required("Language", default=str(locale.getdefaultlocale()[0]).upper()): vol.In(sorted(list(API_LOCALE))),
+                vol.Required("Country Code", default=getCountryCode(str(tzlocal.get_localzone())).upper()): vol.In(sorted(list(dict(API_SERVERS).keys()))),
+                vol.Required("Timezone", default=str(tzlocal.get_localzone()).upper()): vol.In(sorted(list(dict(country_timezones.items()).values()))),
             }
         )
 
