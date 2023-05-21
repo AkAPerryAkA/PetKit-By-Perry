@@ -30,7 +30,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             errors["base"] = "auth_error"
         
         API_SERVERS.clear()
-        for CountryCode in (await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None)):
+        for CountryCode in sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None):
             API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
         
         STEP_USER_DATA_SCHEMA = vol.Schema(
