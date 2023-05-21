@@ -5,7 +5,7 @@
     "documentation": "https://github.com/AkAPerryAkA/PetKit-By-Perry",
     "iot_class": "cloud_polling",
     "issue_tracker": "https://github.com/AkAPerryAkA/PetKit-By-Perry/issues",
-    "requirements": [],
+    "requirements": ["Babel==2.12.1"],
     "version": "0.0.1",
     "config_flow": true
   }
