@@ -3,6 +3,8 @@ import requests
 import pytz
 import tzlocal
 import locale
+import aiohttp
+import asyncio
 from pytz import country_timezones
 
 from .const import API_REGION_SERVERS, API_SERVERS
@@ -40,12 +42,18 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None
     })
     if Param is None:
         try:
-            result = await requests.post(URL, headers=Header, timeout=(2, 5))
+            #result = await requests.post(URL, headers=Header, timeout=(2, 5))
+            async with aiohttp.ClientSession(headers=Header) as session:
+                async with session.get(url=URL) as response:
+                    result = await response.read()
         except ValueError as error:
             raise error
     else:
         try:
-            result = await requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
+            #result = await requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
+            async with aiohttp.ClientSession(headers=Header) as session:
+                async with session.get(url=URL, params=Param) as response:
+                    result = await response.read()
         except ValueError as error:
             raise error
     if list(result.json().keys())[0] == 'result':
