@@ -22,7 +22,7 @@ async def getAPILocale():
     for CountryCode in list(dict(API_SERVERS).keys()):
         for Language in list(dict(locale.locale_alias).keys()):
             if re.search(CountryCode, Language, re.IGNORECASE) and re.search("^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$", Language, re.IGNORECASE):
-                API_LANGUAGE.append(Locale(Language.replace('_', '-').upper()).get_display_name('en_US'), Language.replace('_', '-').upper())
+                API_LANGUAGE.append([Locale(Language.replace('_', '-').upper()).get_display_name('en_US'), Language.replace('_', '-').upper()])
                 break
 
 async def getAPIServers():
