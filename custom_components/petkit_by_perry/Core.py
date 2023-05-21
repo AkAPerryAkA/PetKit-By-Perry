@@ -45,7 +45,7 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None
             #result = await requests.post(URL, headers=Header, timeout=(2, 5))
             async with aiohttp.ClientSession(headers=Header) as session:
                 async with session.get(url=URL) as response:
-                    result = await response.read()
+                    result = await response.json()
         except ValueError as error:
             raise error
     else:
@@ -53,15 +53,15 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None
             #result = await requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
             async with aiohttp.ClientSession(headers=Header) as session:
                 async with session.get(url=URL, params=Param) as response:
-                    result = await response.read()
+                    result = await response.json()
         except ValueError as error:
             raise error
-    if list(result.json().keys())[0] == 'result':
-        if list(result.json()['result'])[0] == 'list':
-            return result.json()['result']['list']
+    if list(result.keys())[0] == 'result':
+        if list(result['result'])[0] == 'list':
+            return result['result']['list']
         else:
-            return result.json()['result']
-    elif list(result.json().keys())[0] == 'error':
-        raise ValueError(result.json()['error']['msg'])
+            return result['result']
+    elif list(result.keys())[0] == 'error':
+        raise ValueError(result['error']['msg'])
     else:
         raise ValueError('Unknown error!')
