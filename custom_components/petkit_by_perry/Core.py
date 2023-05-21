@@ -1,6 +1,11 @@
 import datetime
 import requests
+import pytz
+import tzlocal
+import locale
 from pytz import country_timezones
+
+from .const import API_REGION_SERVERS, API_SERVERS
 
 def getCountryCode(TimeZone):
     for countrycode in country_timezones:
@@ -9,10 +14,16 @@ def getCountryCode(TimeZone):
                 return countrycode
     return next(iter(country_timezones))
 
-def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
+async def getAPIServers():
+    result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, Param = None, Token = None)
+    API_SERVERS.clear()
+    for CountryCode in result:
+        API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
+
+async def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     if Token is not None:
         if Account._Token_Expires > datetime.now():
-            Account.getToken
+            await Account.getToken
         Header = {
             "X-Session": Account._Token,
         }
@@ -29,12 +40,12 @@ def sendRequest(Account, TimeZone, Locale, URL, Param = None, Token = None):
     })
     if Param is None:
         try:
-            result = requests.post(URL, headers=Header, timeout=(2, 5))
+            result = await requests.post(URL, headers=Header, timeout=(2, 5))
         except ValueError as error:
             raise error
     else:
         try:
-            result = requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
+            result = await requests.post(URL, data=Param, headers=Header, timeout=(2, 5))
         except ValueError as error:
             raise error
     if list(result.json().keys())[0] == 'result':

@@ -4,15 +4,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 from homeassistant.helpers import aiohttp_client
 import voluptuous as vol
-import locale
-import pytz
-import requests
 import tzlocal
 import asyncio
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode, sendRequest
-from .const import DOMAIN, API_REGION_SERVERS, API_SERVERS
+from .Core import getCountryCode, getAPIServers
+from .const import DOMAIN, API_SERVERS
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
@@ -26,12 +23,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 return self.async_create_entry(...)
 
             errors["base"] = "auth_error"
-        getServers = asyncio.create_task(requests.post(API_REGION_SERVERS, timeout=(2, 5)))
-        await getServers
-        API_SERVERS.clear()
-        for CountryCode in getServers:
-            API_SERVERS.append([list(CountryCode.values())[2], list(CountryCode.values())[1]])
-        
+        asyncio.run(getAPIServers())
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
