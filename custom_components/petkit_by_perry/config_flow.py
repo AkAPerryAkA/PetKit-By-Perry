@@ -6,8 +6,8 @@ import tzlocal
 import locale
 from pytz import country_timezones
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode, getLocale, getAPIServers
-from .const import DOMAIN, API_SERVERS, API_LOGIN_PATH, API_SERVER, API_LOCALE
+from .Core import getCountryCode, getAPILocale, getAPIServers
+from .const import DOMAIN, API_SERVERS, API_LOCALE
 
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
@@ -22,8 +22,8 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 return self.async_create_entry(...)
 
             errors["base"] = "auth_error"
-        await getLocale()
         await getAPIServers()
+        await getAPILocale()
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),

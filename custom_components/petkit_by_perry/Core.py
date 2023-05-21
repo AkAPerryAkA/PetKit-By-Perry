@@ -16,7 +16,7 @@ def getCountryCode(TimeZone):
                 return countrycode.upper()
     return next(iter(country_timezones))
 
-async def getLocale():
+async def getAPILocale():
     API_LOCALE.clear()
     for CountryCode in list(dict(API_SERVERS).keys()):
         for Language in list(dict(locale.locale_alias).keys()):
