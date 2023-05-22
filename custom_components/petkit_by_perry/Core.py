@@ -5,7 +5,8 @@ import locale
 import aiohttp
 import re
 from datetime import datetime, timedelta
-from babel import Locale
+from langcodes import *
+import language_data
 from pytz import country_timezones
 
 from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY
@@ -20,10 +21,10 @@ def getCountryCode(TimeZone):
 async def getAPILocale():
     API_LANGUAGE.clear()
     for CountryCode in list(dict(API_SERVERS).keys()):
-        for Language in list(dict(locale.locale_alias).keys()):
-            if re.search(CountryCode, Language, re.IGNORECASE) and re.search("^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$", Language, re.IGNORECASE):
+        for Lang in list(dict(locale.locale_alias).keys()):
+            if re.search(CountryCode, Lang, re.IGNORECASE) and re.search("^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$", Lang, re.IGNORECASE):
                 try:
-                    API_LANGUAGE.append([Locale(Language.replace('_', '-').upper()).get_display_name('en_US'), Language.replace('_', '-').upper()])
+                    API_LANGUAGE.append([Language.get(Lang).display_name(), Lang.upper()])
                     break
                 except:
                     break
