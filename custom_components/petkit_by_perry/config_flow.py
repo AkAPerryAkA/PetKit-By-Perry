@@ -7,6 +7,7 @@ import locale
 from pytz import country_timezones
 from langcodes import *
 import language_data
+from babel import Locale
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, getAPILocale, getAPIServers
 from .const import DOMAIN, API_COUNTRY, API_LANGUAGE
