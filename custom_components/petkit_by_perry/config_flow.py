@@ -8,7 +8,7 @@ from pytz import country_timezones
 from babel import Locale
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, getAPIServers
-from .const import DOMAIN, API_COUNTRY, API_LANGUAGE
+from .const import DOMAIN, API_COUNTRY, API_TIMEZONE
 
 @config_entries.HANDLERS.register(DOMAIN)
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
@@ -29,8 +29,8 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
                 vol.Required('Password'): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
-                vol.Required("Country", default=dict(API_COUNTRY)[str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper()))]): vol.In(sorted(list(dict(API_COUNTRY).keys()))),
-                vol.Required("Timezone", default=str(tzlocal.get_localzone())): vol.In(sorted(list(dict(country_timezones.items()).values()))),
+                vol.Required("Country", default=dict(API_COUNTRY)[str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper()))]): vol.In(sorted(list(dict(API_COUNTRY).values()))),
+                vol.Required("Timezone", default=dict(API_TIMEZONE)[str(tzlocal.get_localzone())]): vol.In(sorted(list(dict(API_TIMEZONE).values()))),
             }
         )
 

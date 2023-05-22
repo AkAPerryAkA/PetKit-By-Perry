@@ -10,6 +10,7 @@ API_SCAN_INTERVAL = timedelta(minutes=2)
 API_SERVERS = []
 API_LANGUAGE = []
 API_COUNTRY = []
+API_TIMEZONE = []
 DOMAIN = "petkit_by_perry"
 SUPPORTED_DOMAINS = [
     'sensor',

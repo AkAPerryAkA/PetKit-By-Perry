@@ -7,7 +7,7 @@ import re
 from datetime import datetime, timedelta
 from pytz import country_timezones
 
-from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY
+from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE
 
 def getCountryCode(TimeZone):
     for countrycode in country_timezones:
@@ -20,9 +20,13 @@ async def getAPIServers():
     result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), API_REGION_SERVERS, None)
     API_SERVERS.clear()
     API_COUNTRY.clear()
+    API_TIMEZONE.clear()
     for CountryCode in result:
         API_SERVERS.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[1]])
         API_COUNTRY.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[3]])
+        if list(CountryCode.values())[2].upper() in list(dict(country_timezones.items()).keys()):
+            for TimeZone in dict(country_timezones.items())[list(CountryCode.values())[2].upper()]:
+                API_TIMEZONE.append([list(CountryCode.values())[2].upper(), TimeZone])
 
 async def getAPIToken(Username, Password, Country, TimeZone):
     TimeZone = pytz.timezone(TimeZone)
