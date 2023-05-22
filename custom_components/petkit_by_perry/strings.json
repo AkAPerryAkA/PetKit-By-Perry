@@ -6,8 +6,7 @@
                 "data": {
                     "Username": "Username",
                     "Password": "Password",
-                    "Language": "Language",
-                    "Country Code": "Country Code",
+                    "Country": "Country",
                     "Timezone": "Timezone"
                 }
             }

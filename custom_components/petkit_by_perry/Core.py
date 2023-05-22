@@ -17,34 +17,34 @@ def getCountryCode(TimeZone):
     return next(iter(country_timezones))
 
 async def getAPIServers():
-    result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, None)
+    result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), API_REGION_SERVERS, None)
     API_SERVERS.clear()
     API_COUNTRY.clear()
     for CountryCode in result:
         API_SERVERS.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[1]])
         API_COUNTRY.append([list(CountryCode.values())[3], list(CountryCode.values())[2].upper()])
 
-async def getAPIToken(Username, Password, Language, CountryCode, TimeZone):
+async def getAPIToken(Username, Password, Country, TimeZone):
     TimeZone = pytz.timezone(TimeZone)
     Param = {
         "timezoneId": TimeZone.zone,
         "timezone": f"{round(TimeZone.seconds/60/60)}.0",
         "username": Username,
         "password": Password,
-        "locale": Language,
+        "locale": locale.getdefaultlocale()[0],
         "encrypt": 1,
     }
-    Result = sendRequest(None, TimeZone, Language, API_SERVER + API_LOGIN_PATH, Param)
+    Result = sendRequest(None, TimeZone, API_SERVER + API_LOGIN_PATH, Param)
     Session = Result['session']
     _Token = Session["id"]
     _Token_Created = datetime.strptime(Session["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
     _Token_Expires = _Token_Created + timedelta(seconds = Session["expiresIn"])
     print("Session created succesfully!")
 
-async def sendRequest(Account, TimeZone, Locale, URL, Param = None):
+async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:
         if Account._Token_Expires > datetime.now():
-            await getAPIToken(None, None, None, None, None)
+            await getAPIToken(None, None, None, None)
         Header = {
             "X-Session": Account._Token,
         }
