@@ -5,8 +5,6 @@ import locale
 import aiohttp
 import re
 from datetime import datetime, timedelta
-from langcodes import *
-import language_data
 from pytz import country_timezones
 
 from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY
