@@ -27,10 +27,10 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         await getAPIServers()
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
-                vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
-                vol.Required('Password'): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
-                vol.Required("Country", default=dict(API_COUNTRY).get(str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper())))): vol.In(sorted(list(dict(API_COUNTRY).values()))),
-                vol.Required("Timezone", default=dict(API_TIMEZONE).get(str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper())))): vol.In(sorted(list(dict(API_TIMEZONE).values()))),
+                vol.Required("username"): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
+                vol.Required("password"): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
+                vol.Required("country", default=dict(API_COUNTRY).get(str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper())))): vol.In(sorted(list(dict(API_COUNTRY).values()))),
+                vol.Required("timezone", default=dict(API_TIMEZONE).get(str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper())))): vol.In(sorted(list(dict(API_TIMEZONE).values()))),
             }
         )
 

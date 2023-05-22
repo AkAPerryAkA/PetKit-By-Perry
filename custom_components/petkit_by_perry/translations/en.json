@@ -4,10 +4,10 @@
             "user": {
                 "title": "PetKit By Perry",
                 "data": {
-                    "Username": "Username",
-                    "Password": "Password",
-                    "Country": "Country",
-                    "Timezone": "Timezone"
+                    "username": "Username",
+                    "password": "Password",
+                    "country": "Country",
+                    "timezone": "Timezone"
                 }
             }
         }
