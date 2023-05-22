@@ -5,8 +5,6 @@ import voluptuous as vol
 import tzlocal
 import locale
 from pytz import country_timezones
-from langcodes import *
-import language_data
 from babel import Locale
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, getAPILocale, getAPIServers
@@ -32,7 +30,6 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             {
                 vol.Required('Username'): TextSelector(TextSelectorConfig(type=TextSelectorType.EMAIL, autocomplete="username")),
                 vol.Required('Password'): TextSelector(TextSelectorConfig(type=TextSelectorType.PASSWORD, autocomplete="current-password")),
-                vol.Required("Language", default=Language.get(str(locale.getdefaultlocale()[0]).upper()).display_name()): vol.In(sorted(list(dict(API_LANGUAGE).keys()))),
                 vol.Required("Country", default=dict(API_COUNTRY)[Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper()).get_display_name('en_US').upper()]): vol.In(sorted(list(dict(API_COUNTRY).keys()))),
                 vol.Required("Timezone", default=str(tzlocal.get_localzone())): vol.In(sorted(list(dict(country_timezones.items()).values()))),
             }

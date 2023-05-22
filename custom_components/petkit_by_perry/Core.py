@@ -18,17 +18,6 @@ def getCountryCode(TimeZone):
                 return countrycode.upper()
     return next(iter(country_timezones))
 
-async def getAPILocale():
-    API_LANGUAGE.clear()
-    for CountryCode in list(dict(API_SERVERS).keys()):
-        for Lang in list(dict(locale.locale_alias).keys()):
-            if re.search(CountryCode, Lang, re.IGNORECASE) and re.search("^[A-Za-z]{2,4}([_-][A-Za-z]{4})?([_-]([A-Za-z]{2}|[0-9]{3}))?$", Lang, re.IGNORECASE):
-                try:
-                    API_LANGUAGE.append([Language.get(Lang).display_name(), Lang.upper()])
-                    break
-                except:
-                    break
-
 async def getAPIServers():
     result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), locale.getdefaultlocale(), API_REGION_SERVERS, None)
     API_SERVERS.clear()
@@ -70,7 +59,7 @@ async def sendRequest(Account, TimeZone, Locale, URL, Param = None):
         "X-Img-Version": "1",
         "X-TimezoneId": TimeZone.zone,
         "X-Client": "ios(14.7.1;iPhone13,4)",
-        "X-Locale": str(Locale).replace("-", "_"),
+        "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
     })
     if Param is None:
         try:
