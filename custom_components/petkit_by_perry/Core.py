@@ -1,11 +1,12 @@
 import datetime
 import pytz
 import tzlocal
-import locale
-import aiohttp
-import re
 from datetime import datetime, timedelta
 from pytz import country_timezones
+import hashlib
+import re
+import locale
+import aiohttp
 
 from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE
 
@@ -29,6 +30,12 @@ async def getAPIServers():
                 API_TIMEZONE.append([list(CountryCode.values())[2].upper(), TimeZone])
 
 async def getAPIToken(Username, Password, Country, TimeZone):
+    if re.findall(r"([a-fA-F\d]{32})", Password):
+        Password = Password.lower()
+    else:
+        hash = hashlib.md5()
+        hash.update(Password.encode("utf-8"))
+        Password = hash.hexdigest()
     TimeZone = pytz.timezone(TimeZone)
     Param = {
         "timezoneId": TimeZone.zone,
@@ -38,12 +45,20 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         "locale": locale.getdefaultlocale()[0],
         "encrypt": 1,
     }
-    Result = sendRequest(None, TimeZone, API_SERVER + API_LOGIN_PATH, Param)
-    Session = Result['session']
-    _Token = Session["id"]
-    _Token_Created = datetime.strptime(Session["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")
-    _Token_Expires = _Token_Created + timedelta(seconds = Session["expiresIn"])
-    print("Session created succesfully!")
+    try:
+        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(Country) + API_LOGIN_PATH, Param)
+        Account = []
+        Account.append(['Username', Username])
+        Account.append(['Password', Password])
+        Account.append(['Country', Country])
+        Account.append(['TimeZone', TimeZone])
+        Account.append(['Token', Result['session']['id']])
+        Account.append(['Token_Created', datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")])
+        Account.append(['Token_Expires', datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"])])
+        print("Session created succesfully!")
+        return Account
+    except:
+        return False
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:

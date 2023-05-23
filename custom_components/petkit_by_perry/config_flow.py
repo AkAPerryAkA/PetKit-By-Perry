@@ -7,7 +7,7 @@ import locale
 from pytz import country_timezones
 from babel import Locale
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode, getAPIServers
+from .Core import getCountryCode, getAPIServers, getAPIToken
 from .const import DOMAIN, API_COUNTRY, API_TIMEZONE
 
 @config_entries.HANDLERS.register(DOMAIN)
@@ -17,11 +17,22 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         errors = {}
         if user_input is not None:
             # Validate user input
-            #valid = await is_valid(user_input)
+            valid = await getAPIToken(user_input['Username'], user_input['Password'], user_input['Country'], user_input['TimeZone'])
             
             if valid:
                 # See next section on create entry usage
-                return self.async_create_entry(...)
+                return self.async_create_entry(
+                    title="Account",
+                    data={
+                        "Username": dict(valid)["username"],
+                        "Password": dict(valid)["Password"],
+                        "Country": dict(valid)["Country"],
+                        "TimeZone": dict(valid)["TimeZone"],
+                        "Token": dict(valid)["Token"],
+                        "Token_Created": dict(valid)["Token_Created"],
+                        "Token_Expires": dict(valid)["Token_Expires"]
+                    },
+                )
 
             errors["base"] = "auth_error"
         await getAPIServers()
