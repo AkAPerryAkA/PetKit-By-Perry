@@ -39,7 +39,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
     TimeZone = pytz.timezone(TimeZone)
     Param = {
         "timezoneId": TimeZone.zone,
-        "timezone": f"{round(TimeZone.seconds/60/60)}.0",
+        "timezone": f"{round(TimeZone._utcoffset.seconds/60/60)}.0",
         "username": Username,
         "password": Password,
         "locale": locale.getdefaultlocale()[0],
@@ -51,7 +51,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         Account.append(['Username', Username])
         Account.append(['Password', Password])
         Account.append(['Country', Country])
-        Account.append(['TimeZone', TimeZone])
+        Account.append(['TimeZone', str(TimeZone)])
         Account.append(['Token', Result['session']['id']])
         Account.append(['Token_Created', datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")])
         Account.append(['Token_Expires', datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"])])
