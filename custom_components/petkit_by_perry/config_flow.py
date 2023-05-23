@@ -17,7 +17,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         errors = {}
         if user_input is not None:
             # Validate user input
-            valid = await getAPIToken(user_input['Username'], user_input['Password'], user_input['Country'], user_input['TimeZone'])
+            valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
             
             if valid:
                 # See next section on create entry usage
