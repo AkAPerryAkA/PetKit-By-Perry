@@ -44,22 +44,19 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         "locale": locale.getdefaultlocale()[0],
         "encrypt": 1,
     }
-    try:
-        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(Country) + API_LOGIN_PATH, Param)
-        Account = {
-            "UserID": Result['user']['account']['userId'],
-            "Username": Username,
-            "Password": Password,
-            "Country": Country,
-            "TimeZone": str(TimeZone),
-            "Token": Result['session']['id'],
-            "Token_Created": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")),
-            "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
-        }
-        print("Session created succesfully!")
-        return Account
-    except:
-        return False
+    Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(Country) + API_LOGIN_PATH, Param)
+    Account = {
+        "UserID": Result['user']['account']['userId'],
+        "Username": Username,
+        "Password": Password,
+        "Country": Country,
+        "TimeZone": str(TimeZone),
+        "Token": Result['session']['id'],
+        "Token_Created": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")),
+        "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
+    }
+    print("Session created succesfully!")
+    return Account
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:

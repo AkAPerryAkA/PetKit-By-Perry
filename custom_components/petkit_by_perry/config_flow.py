@@ -19,7 +19,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         if user_input is not None:
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
-            except Exception:
+            except:
                 errors["base"] = "auth"
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])
