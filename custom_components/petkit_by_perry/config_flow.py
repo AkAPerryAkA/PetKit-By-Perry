@@ -5,6 +5,7 @@ import voluptuous as vol
 import tzlocal
 from babel import Locale
 import logging
+from typing import Any, Dict, Optional
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, getAPIServers, getAPIToken
 from .const import DOMAIN, API_COUNTRY, API_TIMEZONE
@@ -14,11 +15,16 @@ _LOGGER = logging.getLogger(__name__)
 @config_entries.HANDLERS.register(DOMAIN)
 class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
+        errors = {}
         if user_input is not None:
-            valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
-            if valid:
+            try:
+                valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
+            except ValueError:
+                errors["base"] = "auth"
+            if errors is {}:
                 _LOGGER.info('New account added with the username {}'.format(user_input['username']))
                 return self.async_create_entry(title="Account_{}".format(valid["UserID"]), data=valid)
+            
         await getAPIServers()
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
