@@ -22,9 +22,10 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             except ValueError:
                 errors["base"] = "auth"
             if errors is {}:
+                await self.async_set_unique_id(valid["UserID"])
+                self._abort_if_unique_id_configured()
                 _LOGGER.info('New account added with the username {}'.format(user_input['username']))
                 return self.async_create_entry(title="Account_{}".format(valid["UserID"]), data=valid)
-            
         await getAPIServers()
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
