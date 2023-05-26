@@ -8,7 +8,7 @@ import re
 import locale
 import aiohttp
 
-from .const import API_REGION_SERVERS, API_SERVERS, API_LANGUAGE, API_SERVER, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE
+from .const import API_REGION_SERVERS, API_SERVERS, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE
 
 def getCountryCode(TimeZone):
     for countrycode in country_timezones:
@@ -18,11 +18,10 @@ def getCountryCode(TimeZone):
     return next(iter(country_timezones))
 
 async def getAPIServers():
-    result = await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), API_REGION_SERVERS, None)
     API_SERVERS.clear()
     API_COUNTRY.clear()
     API_TIMEZONE.clear()
-    for CountryCode in result:
+    for CountryCode in (await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), API_REGION_SERVERS, None)):
         API_SERVERS.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[1]])
         API_COUNTRY.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[3]])
         if list(CountryCode.values())[2].upper() in list(dict(country_timezones.items()).keys()):
@@ -47,14 +46,16 @@ async def getAPIToken(Username, Password, Country, TimeZone):
     }
     try:
         Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(Country) + API_LOGIN_PATH, Param)
-        Account = []
-        Account.append(['Username', Username])
-        Account.append(['Password', Password])
-        Account.append(['Country', Country])
-        Account.append(['TimeZone', str(TimeZone)])
-        Account.append(['Token', Result['session']['id']])
-        Account.append(['Token_Created', datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")])
-        Account.append(['Token_Expires', datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"])])
+        Account = {
+            "UserID": Result['user']['account']['userId'],
+            "Username": Username,
+            "Password": Password,
+            "Country": Country,
+            "TimeZone": str(TimeZone),
+            "Token": Result['session']['id'],
+            "Token_Created": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")),
+            "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
+        }
         print("Session created succesfully!")
         return Account
     except:
@@ -62,10 +63,10 @@ async def getAPIToken(Username, Password, Country, TimeZone):
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:
-        if Account._Token_Expires > datetime.now():
+        if Account.token_expires > datetime.now():
             await getAPIToken(None, None, None, None)
         Header = {
-            "X-Session": Account._Token,
+            "X-Session": Account.token,
         }
     else:
         Header = {}
