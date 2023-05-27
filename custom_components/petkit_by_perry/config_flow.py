@@ -18,7 +18,10 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         if user_input is not None:
             _LOGGER.info('Authenticating {}'.format(user_input['username']))
             try:
-                valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
+                try:
+                    valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
+                except:
+                    raise CannotConnect
             except CannotConnect:
                 errors["base"] = "auth"
             if errors is {}:
