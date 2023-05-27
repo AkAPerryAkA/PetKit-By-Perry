@@ -1,5 +1,5 @@
 # MODULE IMPORT #
-from homeassistant import config_entries
+from homeassistant import config_entries, exceptions
 from homeassistant.helpers.selector import TextSelector, TextSelectorConfig, TextSelectorType
 import voluptuous as vol
 import tzlocal
@@ -12,15 +12,14 @@ from .const import DOMAIN, API_COUNTRY, API_TIMEZONE
 
 _LOGGER = logging.getLogger(__name__)
 
-@config_entries.HANDLERS.register(DOMAIN)
-class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
+class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:
             _LOGGER.info('Authenticating {}'.format(user_input['username']))
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
-            except:
+            except CannotConnect:
                 errors["base"] = "auth"
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])
@@ -37,3 +36,7 @@ class PetKitByPerryConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             }
         )
         return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA)
+    
+
+class CannotConnect(exceptions.HomeAssistantError):
+    """Error to indicate we cannot connect."""
