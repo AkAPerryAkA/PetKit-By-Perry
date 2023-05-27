@@ -28,7 +28,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 await self.async_set_unique_id(valid["UserID"])
                 self._abort_if_unique_id_configured()
                 _LOGGER.info('New account added with the username {}'.format(user_input['username']))
-                return self.async_create_entry(title="Account_{}".format(valid["UserID"]), data=valid)
+                return self.async_create_entry(title=valid["Username"], data=valid)
         await getAPIServers()
         STEP_USER_DATA_SCHEMA = vol.Schema(
             {
@@ -38,7 +38,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 vol.Required("timezone", default=dict(API_TIMEZONE).get(str(Locale(getCountryCode(str(tzlocal.get_localzone())).replace('_', '-').upper())))): vol.In(sorted(list(dict(API_TIMEZONE).values()))),
             }
         )
-        return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA)
+        return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors)
     
 
 class CannotConnect(exceptions.HomeAssistantError):

@@ -44,7 +44,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         "locale": locale.getdefaultlocale()[0],
         "encrypt": 1,
     }
-    Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(Country) + API_LOGIN_PATH, Param)
+    Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(API_COUNTRY.index(list(dict(API_COUNTRY).values()).index(Country))) + API_LOGIN_PATH, Param)
     Account = {
         "UserID": Result['user']['account']['userId'],
         "Username": Username,
