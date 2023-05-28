@@ -7,8 +7,12 @@ import hashlib
 import re
 import locale
 import aiohttp
+from asyncio import TimeoutError
+from aiohttp import ClientConnectorError, ContentTypeError
 
 from .const import API_REGION_SERVERS, API_SERVERS, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE
+
+_LOGGER = logging.getLogger(__name__)
 
 def getCountryCode(TimeZone):
     for countrycode in country_timezones:
@@ -79,16 +83,24 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
         try:
             async with aiohttp.ClientSession(headers=Header) as session:
                 async with session.get(url=URL) as response:
-                    result = await response.json()
-        except Exception as error:
-            raise error
+                    result = await response
+                    result = result.json()
+        except (ClientConnectorError, ContentTypeError, TimeoutError) as exc:
+            lgs = [URL, Header, exc]
+            if result:
+                lgs.extend([result.status, result.content])
+            _LOGGER.error('Request Petkit api failed: %s', lgs)
     else:
         try:
             async with aiohttp.ClientSession(headers=Header) as session:
                 async with session.get(url=URL, params=Param) as response:
-                    result = await response.json()
-        except Exception as error:
-            raise error
+                    result = await response
+                    result = result.json()
+        except (ClientConnectorError, ContentTypeError, TimeoutError) as exc:
+            lgs = [URL, Header, exc]
+            if result:
+                lgs.extend([result.status, result.content])
+            _LOGGER.error('Request Petkit api failed: %s', lgs)
     try:
         if list(result.keys())[0] == 'result':
             if list(result['result'])[0] == 'list':
