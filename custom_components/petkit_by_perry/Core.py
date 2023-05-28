@@ -80,21 +80,24 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
             async with aiohttp.ClientSession(headers=Header) as session:
                 async with session.get(url=URL) as response:
                     result = await response.json()
-        except ValueError as error:
+        except Exception as error:
             raise error
     else:
         try:
             async with aiohttp.ClientSession(headers=Header) as session:
                 async with session.get(url=URL, params=Param) as response:
                     result = await response.json()
-        except ValueError as error:
+        except Exception as error:
             raise error
-    if list(result.keys())[0] == 'result':
-        if list(result['result'])[0] == 'list':
-            return result['result']['list']
+    try:
+        if list(result.keys())[0] == 'result':
+            if list(result['result'])[0] == 'list':
+                return result['result']['list']
+            else:
+                return result['result']
+        elif list(result.keys())[0] == 'error':
+            raise ValueError(result['error']['msg'])
         else:
-            return result['result']
-    elif list(result.keys())[0] == 'error':
-        raise ValueError(result['error']['msg'])
-    else:
-        raise ValueError('Unknown error!')
+            raise ValueError('Unknown error!')
+    except Exception as error:
+        raise error
