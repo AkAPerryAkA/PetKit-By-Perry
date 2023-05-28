@@ -7,6 +7,7 @@ import hashlib
 import re
 import locale
 import aiohttp
+import logging
 from asyncio import TimeoutError
 from aiohttp import ClientConnectorError, ContentTypeError
 
