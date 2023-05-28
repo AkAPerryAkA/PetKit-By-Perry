@@ -80,28 +80,13 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
         "X-Client": "ios(14.7.1;iPhone13,4)",
         "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
     })
-    if Param is None:
-        try:
-            async with aiohttp.ClientSession(headers=Header) as session:
-                async with session.get(url=URL) as response:
-                    result = await response
-                    result = result.json()
-        except (ClientConnectorError, ContentTypeError, TimeoutError) as exc:
-            lgs = [URL, Header, exc]
-            if result:
-                lgs.extend([result.status, result.content])
-            _LOGGER.error('Request Petkit api failed: %s', lgs)
-    else:
-        try:
-            async with aiohttp.ClientSession(headers=Header) as session:
-                async with session.get(url=URL, params=Param) as response:
-                    result = await response
-                    result = result.json()
-        except (ClientConnectorError, ContentTypeError, TimeoutError) as exc:
-            lgs = [URL, Header, exc]
-            if result:
-                lgs.extend([result.status, result.content])
-            _LOGGER.error('Request Petkit api failed: %s', lgs)
+    try:
+        async with aiohttp.ClientSession(headers=Header) as session:
+            async with session.get(url=URL, params=Param) as response:
+                result = await response.json()
+    except (ClientConnectorError, ContentTypeError, TimeoutError) as exc:
+        lgs = [URL, Header, exc]
+        _LOGGER.error('Request Petkit api failed: %s', lgs)
     try:
         if list(result.keys())[0] == 'result':
             if list(result['result'])[0] == 'list':
