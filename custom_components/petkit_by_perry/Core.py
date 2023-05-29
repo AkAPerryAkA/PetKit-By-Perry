@@ -8,8 +8,6 @@ import re
 import locale
 import aiohttp
 import logging
-from asyncio import TimeoutError
-from aiohttp import ClientConnectorError, ContentTypeError
 from homeassistant import exceptions
 
 from .const import API_REGION_SERVERS, API_SERVERS, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE

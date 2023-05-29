@@ -22,6 +22,7 @@ import logging
 _LOGGER = logging.getLogger(__name__)
 
 from .const import API_SERVERS, API_SERVER, API_LOGIN_PATH, API_DEVICES_PATH
+from .Core import CannotConnect
 from .Device import Device
 
 class Account:
@@ -85,13 +86,13 @@ class Account:
             self.update_config('Token', result['session']['id'])
             self.update_config('Token_Created', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")))
             self.update_config('Token_Expires', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = result['session']["expiresIn"])))
-            _LOGGER.info('Update token for {} success'.format(self.username))
+            _LOGGER.debug("Update token for %s success", self.username)
             return True
         except ValueError as error:
-            _LOGGER.error('Update token for {} failed: {}'.format(self.username, error))
+            _LOGGER.debug("Update token for %s failed: %s", self.username, error)
             return False
     
-    async def send_request(self, URL, Param = None, Token = False) -> list:
+    async def send_request(self, URL, Param = None, Token = False) -> dict:
         if Token is True:
             if self.token_expires > datetime.now():
                 await self.update_token()
@@ -110,35 +111,28 @@ class Account:
             "X-Client": "ios(14.7.1;iPhone13,4)",
             "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
         })
-        _error = None
-        if Param is None:
-            try:
-                async with aiohttp.ClientSession(headers=Header) as session:
-                    async with session.get(url=URL) as response:
-                        result = await response.json()
-            except ValueError as error:
-                _error = error
-        else:
-            try:
-                async with aiohttp.ClientSession(headers=Header) as session:
-                    async with session.get(url=URL, params=Param) as response:
-                        result = await response.json()
-            except ValueError as error:
-                _error = error
-        if _error is not None:
-            _LOGGER.error('API request for {} failed: {}'.format(self.username, _error))
-            return []
-        elif list(result.keys())[0] == 'result':
+        try:
+            async with aiohttp.ClientSession(headers=Header) as session:
+                async with session.get(url=URL, params=Param) as response:
+                    result = await response.json()
+        except ValueError as error:
+            _LOGGER.debug("API request for %s failed: %s", self.username, error)
+            return None
+        if list(result.keys())[0] == 'result':
+            _LOGGER.debug("API returned results for %s", self.username)
             if list(result['result'])[0] == 'list':
                 return result['result']['list']
             else:
                 return result['result']
         elif list(result.keys())[0] == 'error':
-            _LOGGER.error('API request for {} failed: {}'.format(self.username, result['error']['msg']))
-            return []
+            _LOGGER.debug("API returned error for %s: %s", self.username, result['error']['msg'])
+            raise CannotConnect(result['error']['msg'])
+        else:
+            _LOGGER.debug("Unknown API response for %s: %s", self.username, URL)
+            raise Exception("Unknown API response")
     
     async def get_devices(self) -> bool:
-        for NewDevice in self.send_request(API_SERVER + API_DEVICES_PATH, Token = True)["devices"]:
+        for NewDevice in (await self.send_request(API_SERVER + API_DEVICES_PATH, Token = True))["devices"]:
             if NewDevice['data']['id'] not in self._config['Devices']:
                 self._config['Devices'].update({
                     NewDevice['data']['id']: {
@@ -157,6 +151,6 @@ class Account:
                     self._config['Devices'][NewDevice['data']['id']].update({
                         'State': 'Normal'
                     })
-                _LOGGER.info('Found new device for {} with ID {} and type {} '.format(self.username, NewDevice['data']['id'], NewDevice['type']))
+                _LOGGER.info("Found new device for %s with ID %s and type %s", self.username, NewDevice['data']['id'], NewDevice['type'])
             #Device(self.hass, self._config, self._config['Devices'][NewDevice['data']['id']])
         return True
