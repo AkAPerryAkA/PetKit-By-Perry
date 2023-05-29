@@ -53,7 +53,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
     except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
         _LOGGER.error('Token setup failed: %s', exc)
     try:
-        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(API_COUNTRY.index(list(dict(API_COUNTRY).values()).index(Country))) + API_LOGIN_PATH, Param)
+        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(dict(API_COUNTRY).keys()[dict(API_COUNTRY).values().index(Country)]) + API_LOGIN_PATH, Param)
     except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
         _LOGGER.error('Token request failed: %s', exc)
     try:
