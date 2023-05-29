@@ -82,7 +82,7 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
     })
     try:
         async with aiohttp.ClientSession(headers=Header) as session:
-            async with session.get(url=URL, params=Param) as response:
+            async with session.post(url=URL, params=Param) as response:
                 result = await response.json()
         if list(result.keys())[0] == 'result':
             if list(result['result'])[0] == 'list':
