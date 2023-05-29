@@ -16,11 +16,11 @@ _LOGGER = logging.getLogger(__name__)
 
 class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
-        self._abort_if_unique_id_configured()
         errors = {}
         if user_input is not None:
             try:
                 await self.async_set_unique_id(user_input['username'].lower())
+                self._abort_if_unique_id_configured()
                 _LOGGER.debug("Authenticating %s", user_input['username'])
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
                 _LOGGER.debug("New account added with the username %s", user_input['username'])
