@@ -24,8 +24,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             except CannotConnect as error:
                 errors["base"] = "auth"
             except Exception as error:
-                _LOGGER.error('Login failed: %s', error)
                 errors["base"] = "err"
+                _LOGGER.error('Login failed: %s', error)
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])
                 self._abort_if_unique_id_configured()
