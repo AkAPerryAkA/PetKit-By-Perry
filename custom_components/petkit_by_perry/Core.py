@@ -34,33 +34,36 @@ async def getAPIServers():
                 API_TIMEZONE.append([list(CountryCode.values())[2].upper(), TimeZone])
 
 async def getAPIToken(Username, Password, Country, TimeZone):
-    if re.findall(r"([a-fA-F\d]{32})", Password):
-        Password = Password.lower()
-    else:
-        hash = hashlib.md5()
-        hash.update(Password.encode("utf-8"))
-        Password = hash.hexdigest()
-    TimeZone = pytz.timezone(TimeZone)
-    Param = {
-        "timezoneId": TimeZone.zone,
-        "timezone": f"{round(TimeZone._utcoffset.seconds/60/60)}.0",
-        "username": Username,
-        "password": Password,
-        "locale": locale.getdefaultlocale()[0],
-        "encrypt": 1,
-    }
-    Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(API_COUNTRY.index(list(dict(API_COUNTRY).values()).index(Country))) + API_LOGIN_PATH, Param)
-    Account = {
-        "UserID": Result['user']['account']['userId'],
-        "Username": Username,
-        "Password": Password,
-        "Country": Country,
-        "TimeZone": str(TimeZone),
-        "Token": Result['session']['id'],
-        "Token_Created": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")),
-        "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
-    }
-    return Account
+    try:
+        if re.findall(r"([a-fA-F\d]{32})", Password):
+            Password = Password.lower()
+        else:
+            hash = hashlib.md5()
+            hash.update(Password.encode("utf-8"))
+            Password = hash.hexdigest()
+        TimeZone = pytz.timezone(TimeZone)
+        Param = {
+            "timezoneId": TimeZone.zone,
+            "timezone": f"{round(TimeZone._utcoffset.seconds/60/60)}.0",
+            "username": Username,
+            "password": Password,
+            "locale": locale.getdefaultlocale()[0],
+            "encrypt": 1,
+        }
+        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(API_COUNTRY.index(list(dict(API_COUNTRY).values()).index(Country))) + API_LOGIN_PATH, Param)
+        Account = {
+            "UserID": Result['user']['account']['userId'],
+            "Username": Username,
+            "Password": Password,
+            "Country": Country,
+            "TimeZone": str(TimeZone),
+            "Token": Result['session']['id'],
+            "Token_Created": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")),
+            "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
+        }
+        return Account
+    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
+        _LOGGER.error('Request Petkit api failed: %s', exc)
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:
@@ -94,5 +97,5 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
         else:
             raise ValueError('Unknown error!')
     except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        lgs = [URL, Header, exc]
+        lgs = [URL, Header, exc, result]
         _LOGGER.error('Request Petkit api failed: %s', lgs)

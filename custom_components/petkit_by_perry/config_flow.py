@@ -6,6 +6,8 @@ import tzlocal
 from babel import Locale
 import logging
 from typing import Any, Dict, Optional
+from asyncio import TimeoutError
+from aiohttp import ClientConnectorError, ContentTypeError
 # VARIABLE/DEFINITION IMPORT #
 from .Core import getCountryCode, getAPIServers, getAPIToken
 from .const import DOMAIN, API_COUNTRY, API_TIMEZONE
@@ -19,7 +21,8 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             _LOGGER.info('Authenticating {}'.format(user_input['username']))
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
-            except ValueError as error:
+            except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as error:
+                _LOGGER.error('Request Petkit api failed: %s', error)
                 errors["base"] = error
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])
