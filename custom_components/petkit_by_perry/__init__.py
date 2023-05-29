@@ -18,4 +18,5 @@ async def async_setup_entry(hass, config_entry):
     Acc = Account(hass, config_entry)
     if Acc.update_token():
         Acc.get_devices()
+    return True
             
