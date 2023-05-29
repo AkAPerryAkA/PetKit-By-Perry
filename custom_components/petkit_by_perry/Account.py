@@ -131,17 +131,17 @@ class Account:
             raise Exception("Unknown API response")
     
     async def get_devices(self) -> bool:
-        for NewDevice in (await self.send_request(API_SERVER + API_DEVICES_PATH, Token = True))["devices"]:
-            if NewDevice['data']['id'] not in self._config['Devices']:
-                _LOGGER.debug("Found new device for %s with ID %s and type %s", self.username, NewDevice['data']['id'], NewDevice['type'])
-                self.device_registry.async_get_or_create(
-                    config_entry_id=self.config.entry_id,
-                    identifiers={(DOMAIN, NewDevice['data']['id'])},
-                    manufacturer="PetKit",
-                    suggested_area="Bathroom",
-                    name=NewDevice['data']['name'],
-                    model=NewDevice['type'],
-                    sw_version=NewDevice['data']['firmware'],
-                )
-            #Device(self.hass, self._config, self._config['Devices'][NewDevice['data']['id']])
+        _LOGGER.debug("Requesting device(s) from %s", self.username)
+        for device in (await self.send_request(API_SERVER + API_DEVICES_PATH, Token = True))["devices"]:
+            _LOGGER.debug("Found device for %s with ID %s and type %s", self.username, device['data']['id'], device['type'])
+            self.device_registry.async_get_or_create(
+                config_entry_id=self.config.entry_id,
+                identifiers={(DOMAIN, device['data']['id'])},
+                manufacturer="PetKit",
+                suggested_area="Bathroom",
+                name=device['data']['name'],
+                model=device['type'],
+                sw_version=device['data']['firmware'],
+            )
+            #Device(self.hass, self._config)
         return True
