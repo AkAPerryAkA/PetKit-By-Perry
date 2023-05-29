@@ -66,7 +66,7 @@ class Account:
         return self._config.get('Token_Expires')
     
     def update_config(self, item, val):
-        self._config[item] = val
+        setattr(self.config, item, val)
     
     async def update_token(self) -> bool:
         timezone = self.timezone
