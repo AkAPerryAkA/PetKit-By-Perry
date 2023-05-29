@@ -133,7 +133,7 @@ class Account:
     async def get_devices(self) -> bool:
         for NewDevice in (await self.send_request(API_SERVER + API_DEVICES_PATH, Token = True))["devices"]:
             if NewDevice['data']['id'] not in self._config['Devices']:
-                _LOGGER.info("Found new device for %s with ID %s and type %s", self.username, NewDevice['data']['id'], NewDevice['type'])
+                _LOGGER.debug("Found new device for %s with ID %s and type %s", self.username, NewDevice['data']['id'], NewDevice['type'])
                 self.device_registry.async_get_or_create(
                     config_entry_id=self.config.entry_id,
                     identifiers={(DOMAIN, NewDevice['data']['id'])},
