@@ -22,7 +22,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
             except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as error:
-                _LOGGER.error('Request Petkit api failed: %s', error)
+                _LOGGER.error('Validation failed: %s', error)
                 errors["base"] = error
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])

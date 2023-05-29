@@ -63,7 +63,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         }
         return Account
     except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        _LOGGER.error('Request Petkit api failed: %s', exc)
+        _LOGGER.error('Token failed: %s', exc)
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:
@@ -98,4 +98,4 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
             raise ValueError('Unknown error!')
     except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
         lgs = [URL, Header, exc, result]
-        _LOGGER.error('Request Petkit api failed: %s', lgs)
+        _LOGGER.error('Request failed: %s', lgs)
