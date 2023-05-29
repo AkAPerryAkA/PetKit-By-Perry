@@ -50,13 +50,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
             "locale": locale.getdefaultlocale()[0],
             "encrypt": 1,
         }
-    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        _LOGGER.error('Token setup failed: %s', exc)
-    try:
-        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(dict(API_COUNTRY).keys()[dict(API_COUNTRY).values().index(Country)]) + API_LOGIN_PATH, Param)
-    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        _LOGGER.error('Token request failed: %s', exc)
-    try:
+        Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(dict(API_COUNTRY).keys()[list(dict(API_COUNTRY).values()).index(Country)]) + API_LOGIN_PATH, Param)
         Account = {
             "UserID": Result['user']['account']['userId'],
             "Username": Username,
@@ -68,28 +62,28 @@ async def getAPIToken(Username, Password, Country, TimeZone):
             "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
         }
         return Account
-    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        _LOGGER.error('Token cleanup failed: %s', exc)
+    except ValueError as error:
+        _LOGGER.error('Token request failed: %s', error)
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
-    if Account is not None:
-        if Account.token_expires > datetime.now():
-            await getAPIToken(None, None, None, None)
-        Header = {
-            "X-Session": Account.token,
-        }
-    else:
-        Header = {}
-    Header.update({
-        "User-Agent": "PETKIT/7.26.1 (iPhone; iOS 14.7.1; Scale/3.00)",
-        "X-Timezone": f"{round(TimeZone._utcoffset.seconds/60/60)}.0",
-        "X-Api-Version": "7.26.1",
-        "X-Img-Version": "1",
-        "X-TimezoneId": TimeZone.zone,
-        "X-Client": "ios(14.7.1;iPhone13,4)",
-        "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
-    })
     try:
+        if Account is not None:
+            if Account.token_expires > datetime.now():
+                await getAPIToken(None, None, None, None)
+            Header = {
+                "X-Session": Account.token,
+            }
+        else:
+            Header = {}
+        Header.update({
+            "User-Agent": "PETKIT/7.26.1 (iPhone; iOS 14.7.1; Scale/3.00)",
+            "X-Timezone": f"{round(TimeZone._utcoffset.seconds/60/60)}.0",
+            "X-Api-Version": "7.26.1",
+            "X-Img-Version": "1",
+            "X-TimezoneId": TimeZone.zone,
+            "X-Client": "ios(14.7.1;iPhone13,4)",
+            "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
+        })
         async with aiohttp.ClientSession(headers=Header) as session:
             async with session.post(url=URL, params=Param) as response:
                 result = await response.json()
@@ -102,6 +96,6 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
             raise ValueError(result['error']['msg'])
         else:
             raise ValueError('Unknown error!')
-    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        lgs = [URL, Header, exc, result]
-        _LOGGER.error('Request failed: %s', lgs)
+    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as error:
+        detailederror = [URL, error]
+        _LOGGER.error('API request failed: %s', detailederror)
