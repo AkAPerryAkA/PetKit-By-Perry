@@ -14,9 +14,10 @@ async def async_setup(hass, config):
     return True
 
 async def async_setup_entry(hass, config_entry):
-    _LOGGER.debug("setting up %s in %s", config_entry.data['Username'], DOMAIN)
+    _LOGGER.debug("setting up %s", config_entry.data['Username'])
     Acc = Account(hass, config_entry)
     if Acc.get_devices():
+        _LOGGER.debug("Found device(s) for %s", config_entry.data['Username'])
         return True
     return False
             
