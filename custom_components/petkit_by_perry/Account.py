@@ -29,7 +29,7 @@ from .Device import Device
 class Account:
     def __init__(self, hass: HomeAssistant, config):
         self.hass = hass
-        self._config = config
+        self._config = config.data
         self.device_registry = dr.async_get(hass)
     
     @property

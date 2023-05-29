@@ -16,7 +16,7 @@ async def async_setup(hass, config):
 async def async_setup_entry(hass, config_entry):
     _LOGGER.debug("setting up %s in %s", config_entry.data['Username'], DOMAIN)
     Acc = Account(hass, config_entry)
-    if Acc.update_token():
-        Acc.get_devices()
-    return True
+    if Acc.get_devices():
+        return True
+    return False
             
