@@ -100,14 +100,15 @@ class Account:
             }
         else:
             Header = {}
+        timezone = self.timezone
         if issubclass(type(self.timezone), str):
-            self.timezone = pytz.timezone(self.timezone)
+            timezone = pytz.timezone(self.timezone)
         Header.update({
             "User-Agent": "PETKIT/7.26.1 (iPhone; iOS 14.7.1; Scale/3.00)",
-            "X-Timezone": f"{round(self.timezone._utcoffset.seconds/60/60)}.0",
+            "X-Timezone": f"{round(timezone._utcoffset.seconds/60/60)}.0",
             "X-Api-Version": "7.26.1",
             "X-Img-Version": "1",
-            "X-TimezoneId": self.timezone.zone,
+            "X-TimezoneId": timezone.zone,
             "X-Client": "ios(14.7.1;iPhone13,4)",
             "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
         })
