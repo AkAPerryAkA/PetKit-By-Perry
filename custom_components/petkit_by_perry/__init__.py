@@ -9,15 +9,13 @@ from .const import DOMAIN
 from .Account import Account
 from .Device import Device
 
-async def async_setup_entry(hass, config):
-    config = config.get(DOMAIN) or {}
-    if config is {}:
-        _LOGGER.debug("No config found for %s", DOMAIN)
-        return False
-    for Acc in config:
-        _LOGGER.debug("setting up %s in %s", Acc.get('Username'), DOMAIN)
-        t_acc = Account(hass, Acc)
-        if t_acc.update_token():
-            t_acc.get_devices()
+async def async_setup(hass, config):
+    # Return boolean to indicate that initialization was successful.
     return True
+
+async def async_setup_entry(hass, config_entry):
+    _LOGGER.debug("setting up %s in %s", config_entry.data['Username'], DOMAIN)
+    Acc = Account(hass, config_entry)
+    if Acc.update_token():
+        Acc.get_devices()
             

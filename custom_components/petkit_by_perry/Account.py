@@ -18,21 +18,19 @@ from homeassistant.core import HomeAssistant
 import locale
 import aiohttp
 import logging
+from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
 
-from .const import API_SERVERS, API_SERVER, API_LOGIN_PATH, API_DEVICES_PATH
+from .const import API_SERVERS, API_SERVER, API_LOGIN_PATH, API_DEVICES_PATH, DOMAIN
 from .Core import CannotConnect
 from .Device import Device
 
 class Account:
-    def __init__(self, hass: HomeAssistant, config: dict):
-        self._config = config
+    def __init__(self, hass: HomeAssistant, config):
         self.hass = hass
-        if self._config.get('Devices') is None:
-            self._config.update({
-                'Devices': {}
-            })
+        self._config = config
+        self.device_registry = dr.async_get(hass)
     
     @property
     def username(self) -> str:
@@ -134,23 +132,14 @@ class Account:
     async def get_devices(self) -> bool:
         for NewDevice in (await self.send_request(API_SERVER + API_DEVICES_PATH, Token = True))["devices"]:
             if NewDevice['data']['id'] not in self._config['Devices']:
-                self._config['Devices'].update({
-                    NewDevice['data']['id']: {
-                        'Type': NewDevice['type'],
-                        'Added': NewDevice['data']['createdAt'],
-                        'Name': NewDevice['data']['name'],
-                        'Firmware': NewDevice['data']['firmware'],
-                        'Description': NewDevice['data']['desc']
-                    }
-                })
-                if 'workState' in NewDevice['data']['status']:
-                    self._config['Devices'][NewDevice['data']['id']].update({
-                        'State': str(NewDevice['data']['status']['workState']['workMode']).replace('0', 'Cleaning').replace('9', 'Maintainance')
-                    })
-                else:
-                    self._config['Devices'][NewDevice['data']['id']].update({
-                        'State': 'Normal'
-                    })
                 _LOGGER.info("Found new device for %s with ID %s and type %s", self.username, NewDevice['data']['id'], NewDevice['type'])
+                self.device_registry.async_get_or_create(
+                    identifiers={(DOMAIN, NewDevice['data']['id'])},
+                    manufacturer="PetKit",
+                    suggested_area="Bathroom",
+                    name=NewDevice['data']['name'],
+                    model=NewDevice['type'],
+                    hw_version=NewDevice['data']['firmware'],
+                )
             #Device(self.hass, self._config, self._config['Devices'][NewDevice['data']['id']])
         return True
