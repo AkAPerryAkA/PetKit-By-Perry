@@ -15,7 +15,7 @@ async def async_setup(hass, config):
         _LOGGER.warning('No config found for {}'.format(DOMAIN))
         return False
     for Acc in config:
-        _LOGGER.info('setting up {} in {}'.format(Acc.get('Username'), DOMAIN))
+        _LOGGER.debug('setting up {} in {}'.format(Acc.get('Username'), DOMAIN))
         t_acc = Account(hass, Acc)
         if t_acc.update_token():
             t_acc.get_devices()

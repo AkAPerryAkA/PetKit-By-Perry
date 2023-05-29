@@ -85,13 +85,16 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
         async with session.post(url=URL, params=Param) as response:
             result = await response.json()
     if list(result.keys())[0] == 'result':
+        _LOGGER.debug('API returned results!')
         if list(result['result'])[0] == 'list':
             return result['result']['list']
         else:
             return result['result']
     elif list(result.keys())[0] == 'error':
+        _LOGGER.debug('API returned error: %s', result['error']['msg'])
         raise CannotConnect(result['error']['msg'])
     else:
+        _LOGGER.debug('Unknown API response')
         raise Exception('Unknown API response')
 
 class CannotConnect(exceptions.HomeAssistantError):

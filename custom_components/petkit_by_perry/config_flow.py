@@ -18,16 +18,16 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
     async def async_step_user(self, user_input=None):
         errors = {}
         if user_input is not None:
-            _LOGGER.warning("Authenticating %s", user_input['username'])
+            _LOGGER.debug("Authenticating %s", user_input['username'])
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
             except CannotConnect:
                 errors["base"] = "auth"
-            except Exception as error:
+            except ValueError as error:
                 errors["base"] = "err"
-                _LOGGER.error('Login failed: %s', error)
+                _LOGGER.debug('Login failed: %s', error)
             if errors is {}:
-                _LOGGER.warning("New account added with the username %s", user_input['username'])
+                _LOGGER.debug("New account added with the username %s", user_input['username'])
                 return self.async_create_entry(title=valid["Username"], data=valid)
         await getAPIServers()
         STEP_USER_DATA_SCHEMA = vol.Schema(
