@@ -9,7 +9,7 @@ from typing import Any, Dict, Optional
 from asyncio import TimeoutError
 from aiohttp import ClientConnectorError, ContentTypeError
 # VARIABLE/DEFINITION IMPORT #
-from .Core import getCountryCode, getAPIServers, getAPIToken
+from .Core import getCountryCode, getAPIServers, getAPIToken, CannotConnect
 from .const import DOMAIN, API_COUNTRY, API_TIMEZONE
 
 _LOGGER = logging.getLogger(__name__)
@@ -21,9 +21,11 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             _LOGGER.info('Authenticating {}'.format(user_input['username']))
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
-            except Exception as error:
-                _LOGGER.debug('Login failed: %s', error)
+            except CannotConnect as error:
                 errors["base"] = "auth"
+            except Exception as error:
+                _LOGGER.error('Login failed: %s', error)
+                errors["base"] = "err"
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])
                 self._abort_if_unique_id_configured()
@@ -39,7 +41,3 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             }
         )
         return self.async_show_form(step_id="user", data_schema=STEP_USER_DATA_SCHEMA, errors=errors)
-    
-
-class CannotConnect(exceptions.HomeAssistantError):
-    """Error to indicate we cannot connect."""

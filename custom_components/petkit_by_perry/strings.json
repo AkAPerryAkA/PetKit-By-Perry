@@ -15,7 +15,8 @@
             "already_configured": "Account is already configured"
         },
         "error": {
-            "auth": "incorrect username or password"
+            "auth": "incorrect username or password",
+            "err": "An error occured"
         }
     }
 }

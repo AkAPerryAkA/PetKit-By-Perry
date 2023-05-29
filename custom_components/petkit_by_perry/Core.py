@@ -10,6 +10,7 @@ import aiohttp
 import logging
 from asyncio import TimeoutError
 from aiohttp import ClientConnectorError, ContentTypeError
+from homeassistant import exceptions
 
 from .const import API_REGION_SERVERS, API_SERVERS, API_LOGIN_PATH, API_COUNTRY, API_TIMEZONE
 
@@ -89,6 +90,9 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
         else:
             return result['result']
     elif list(result.keys())[0] == 'error':
-        raise ValueError(result['error']['msg'])
+        raise CannotConnect(result['error']['msg'])
     else:
-        raise ValueError('Unknown error!')
+        raise Exception('Unknown API response')
+
+class CannotConnect(exceptions.HomeAssistantError):
+    """Error to indicate we cannot connect."""
