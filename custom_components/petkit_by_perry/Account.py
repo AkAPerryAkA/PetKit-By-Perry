@@ -93,7 +93,7 @@ class Account:
     
     async def send_request(self, URL, Param = None, Token = False) -> dict:
         if Token is True:
-            if datetime.strptime(self.token_expires, "%Y-%m-%dT%H:%M:%S.%fZ") > datetime.now():
+            if datetime.strptime(self.token_expires, "%Y-%m-%d %H:%M:%S.%f") > datetime.now():
                 await self.update_token()
             Header = {
                 "X-Session": self.token,
