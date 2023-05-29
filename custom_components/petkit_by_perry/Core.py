@@ -25,7 +25,7 @@ async def getAPIServers():
     API_SERVERS.clear()
     API_COUNTRY.clear()
     API_TIMEZONE.clear()
-    for CountryCode in (await sendRequest(None, pytz.timezone(str(tzlocal.get_localzone())), API_REGION_SERVERS, None)):
+    for CountryCode in (await sendRequest(pytz.timezone(str(tzlocal.get_localzone())), API_REGION_SERVERS, None)):
         API_SERVERS.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[1]])
         API_COUNTRY.append([list(CountryCode.values())[2].upper(), list(CountryCode.values())[3]])
         if list(CountryCode.values())[2].upper() in list(dict(country_timezones.items()).keys()):
@@ -48,7 +48,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         "locale": locale.getdefaultlocale()[0],
         "encrypt": 1,
     }
-    Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(list(dict(API_COUNTRY).keys())[list(dict(API_COUNTRY).values()).index(Country)]) + API_LOGIN_PATH, Param)
+    Result = await sendRequest(TimeZone, dict(API_SERVERS).get(list(dict(API_COUNTRY).keys())[list(dict(API_COUNTRY).values()).index(Country)]) + API_LOGIN_PATH, Param)
     Account = {
         "UserID": Result['user']['account']['userId'],
         "Username": Username,
@@ -61,16 +61,8 @@ async def getAPIToken(Username, Password, Country, TimeZone):
     }
     return Account
 
-async def sendRequest(Account, TimeZone, URL, Param = None):
-    if Account is not None:
-        if Account.token_expires > datetime.now():
-            await getAPIToken(None, None, None, None)
-        Header = {
-            "X-Session": Account.token,
-        }
-    else:
-        Header = {}
-    Header.update({
+async def sendRequest(TimeZone, URL, Param = None):
+    Header = {
         "User-Agent": "PETKIT/7.26.1 (iPhone; iOS 14.7.1; Scale/3.00)",
         "X-Timezone": f"{round(TimeZone._utcoffset.seconds/60/60)}.0",
         "X-Api-Version": "7.26.1",
@@ -78,7 +70,7 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
         "X-TimezoneId": TimeZone.zone,
         "X-Client": "ios(14.7.1;iPhone13,4)",
         "X-Locale": locale.getdefaultlocale()[0].replace("-", "_"),
-    })
+    }
     async with aiohttp.ClientSession(headers=Header) as session:
         async with session.post(url=URL, params=Param) as response:
             result = await response.json()
