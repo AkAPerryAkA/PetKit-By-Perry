@@ -22,7 +22,7 @@ from homeassistant.helpers import device_registry as dr
 
 _LOGGER = logging.getLogger(__name__)
 
-from .const import API_SERVERS, API_SERVER, API_LOGIN_PATH, API_DEVICES_PATH, DOMAIN
+from .const import API_SERVERS, API_COUNTRY, API_LOGIN_PATH, API_DEVICES_PATH, DOMAIN
 from .Core import CannotConnect
 from .Device import Device
 
@@ -48,6 +48,10 @@ class Account:
     @property
     def timezone(self) -> str:
         return self._config.get('TimeZone')
+    
+    @property
+    def api_server(self) -> str:
+        return self._config.get('API_SERVER')
     
     @property
     def token(self) -> str:
@@ -81,7 +85,7 @@ class Account:
             "encrypt": 1,
         }
         try:
-            result = await self.send_request(dict(API_SERVERS).get(self.country) + API_LOGIN_PATH, Param)
+            result = await self.send_request(dict(API_SERVERS).get(list(dict(API_COUNTRY).keys())[list(dict(API_COUNTRY).values()).index(self.country)]) + API_LOGIN_PATH, Param)
             self.update_config('Token', result['session']['id'])
             self.update_config('Token_Created', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")))
             self.update_config('Token_Expires', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = result['session']["expiresIn"])))
@@ -134,7 +138,7 @@ class Account:
     
     async def get_devices(self) -> bool:
         _LOGGER.debug("Requesting device(s) from %s", self.username)
-        for device in (await self.send_request(API_SERVER + API_DEVICES_PATH, Token = True))["devices"]:
+        for device in (await self.send_request(dict(API_SERVERS).get(list(dict(API_COUNTRY).keys())[list(dict(API_COUNTRY).values()).index(self.country)]) + API_DEVICES_PATH, Token = True))["devices"]:
             _LOGGER.debug("Found device for %s with ID %s and type %s", self.username, device['data']['id'], device['type'])
             self.device_registry.async_get_or_create(
                 config_entry_id=self.config.entry_id,
