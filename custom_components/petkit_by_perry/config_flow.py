@@ -22,7 +22,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
             try:
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
             except Exception as error:
-                _LOGGER.error('Login failed: %s', error)
+                _LOGGER.debug('Login failed: %s', error)
                 errors["base"] = "auth"
             if errors is {}:
                 await self.async_set_unique_id(valid["UserID"])
