@@ -31,7 +31,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
         errors = {}
         if user_input is not None:
             try:
-                if self._host_in_configuration_exists(user_input['username'].lower()):
+                if self.account_in_configuration_exists(user_input['username'].lower()):
                     return self.async_abort(reason="already_configured")
                 await self.async_set_unique_id(user_input['username'].lower())
                 self._abort_if_unique_id_configured()
