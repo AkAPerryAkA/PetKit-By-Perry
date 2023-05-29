@@ -50,7 +50,13 @@ async def getAPIToken(Username, Password, Country, TimeZone):
             "locale": locale.getdefaultlocale()[0],
             "encrypt": 1,
         }
+    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
+        _LOGGER.error('Token setup failed: %s', exc)
+    try:
         Result = await sendRequest(None, TimeZone, dict(API_SERVERS).get(API_COUNTRY.index(list(dict(API_COUNTRY).values()).index(Country))) + API_LOGIN_PATH, Param)
+    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
+        _LOGGER.error('Token request failed: %s', exc)
+    try:
         Account = {
             "UserID": Result['user']['account']['userId'],
             "Username": Username,
@@ -63,7 +69,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         }
         return Account
     except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as exc:
-        _LOGGER.error('Token failed: %s', exc)
+        _LOGGER.error('Token cleanup failed: %s', exc)
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
     if Account is not None:
