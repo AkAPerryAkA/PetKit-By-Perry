@@ -69,16 +69,12 @@ class Account:
         self._config[item] = val
     
     async def update_token(self) -> bool:
-        if re.findall(r"([a-fA-F\d]{32})", self.password):
-            self.password = self.password.lower()
-        else:
-            hash = hashlib.md5()
-            hash.update(self.password.encode("utf-8"))
-            self.password = hash.hexdigest()
-        self.timezone = pytz.timezone(self.timezone)
+        timezone = self.timezone
+        if issubclass(type(self.timezone), str):
+            timezone = pytz.timezone(self.timezone)
         Param = {
-            "timezoneId": self.timezone.zone,
-            "timezone": f"{round(self.timezone._utcoffset.seconds/60/60)}.0",
+            "timezoneId": timezone.zone,
+            "timezone": f"{round(timezone._utcoffset.seconds/60/60)}.0",
             "username": self.username,
             "password": self.password,
             "locale": locale.getdefaultlocale()[0],
