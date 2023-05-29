@@ -29,6 +29,7 @@ from .Device import Device
 class Account:
     def __init__(self, hass: HomeAssistant, config):
         self.hass = hass
+        self.config = config
         self._config = config.data
         self.device_registry = dr.async_get(hass)
     
@@ -134,12 +135,13 @@ class Account:
             if NewDevice['data']['id'] not in self._config['Devices']:
                 _LOGGER.info("Found new device for %s with ID %s and type %s", self.username, NewDevice['data']['id'], NewDevice['type'])
                 self.device_registry.async_get_or_create(
+                    config_entry_id=self.config.entry_id,
                     identifiers={(DOMAIN, NewDevice['data']['id'])},
                     manufacturer="PetKit",
                     suggested_area="Bathroom",
                     name=NewDevice['data']['name'],
                     model=NewDevice['type'],
-                    hw_version=NewDevice['data']['firmware'],
+                    sw_version=NewDevice['data']['firmware'],
                 )
             #Device(self.hass, self._config, self._config['Devices'][NewDevice['data']['id']])
         return True
