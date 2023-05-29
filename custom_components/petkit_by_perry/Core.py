@@ -62,7 +62,7 @@ async def getAPIToken(Username, Password, Country, TimeZone):
             "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
         }
         return Account
-    except ValueError as error:
+    except Exception as error:
         _LOGGER.error('Token request failed: %s', error)
 
 async def sendRequest(Account, TimeZone, URL, Param = None):
@@ -96,6 +96,6 @@ async def sendRequest(Account, TimeZone, URL, Param = None):
             raise ValueError(result['error']['msg'])
         else:
             raise ValueError('Unknown error!')
-    except (ClientConnectorError, ContentTypeError, TimeoutError, ValueError) as error:
+    except Exception as error:
         detailederror = [URL, error]
         _LOGGER.error('API request failed: %s', detailederror)
