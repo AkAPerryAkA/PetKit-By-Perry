@@ -68,7 +68,7 @@ class Account:
     def update_config(self, item, val):
         new_data = self._config
         new_data[item] = val
-        self.hass.config_entries.async_update_entry(self.config, data=new_data)
+        await self.hass.config_entries.async_update_entry(self.config, data=new_data)
     
     async def update_token(self) -> bool:
         timezone = self.timezone
