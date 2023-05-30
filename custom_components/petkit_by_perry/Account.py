@@ -77,7 +77,10 @@ class Account:
             "Token_Expires": self._config['Token_Expires']
         }
         data_template[item] = val
-        await self.hass.config_entries.async_update_entry(self.config, data=data_template)
+        if await self.hass.config_entries.async_update_entry(self.config, data=data_template) is True:
+            _LOGGER.debug("Update config for %s success", item)
+        else:
+            _LOGGER.debug("Update config for %s failed", item)
     
     async def update_token(self) -> bool:
         timezone = self.timezone
