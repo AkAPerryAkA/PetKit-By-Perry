@@ -38,7 +38,7 @@ class ConfigFlow(config_entries.ConfigFlow, domain = DOMAIN):
                 _LOGGER.debug("Authenticating %s", user_input['username'])
                 valid = await getAPIToken(user_input['username'], user_input['password'], user_input['country'], user_input['timezone'])
                 _LOGGER.debug("New account added with the username %s", user_input['username'])
-                return self.async_create_entry(title=valid["Username"], data=valid)
+                return self.async_create_entry(title=valid["Username"].lower(), data=valid)
             except CannotConnect:
                 errors["base"] = "auth"
             except ValueError as error:

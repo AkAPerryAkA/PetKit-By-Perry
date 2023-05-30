@@ -22,4 +22,7 @@ async def async_setup_entry(hass, config_entry):
         _LOGGER.debug("Found device(s) for %s", config_entry.data['Username'])
         return True
     return False
-            
+
+async def update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
+    """Update listener."""
+    await hass.config_entries.async_reload(entry.entry_id)
