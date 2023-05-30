@@ -65,7 +65,7 @@ class Account:
     def token_expires(self) -> str:
         return self._config.get('Token_Expires')
     
-    def update_config(self, item, val):
+    async def update_config(self, item, val):
         new_data = self._config
         new_data[item] = val
         await self.hass.config_entries.async_update_entry(self.config, data=new_data)
@@ -84,9 +84,9 @@ class Account:
         }
         try:
             result = await self.send_request(dict(API_SERVERS).get(list(dict(API_COUNTRY).keys())[list(dict(API_COUNTRY).values()).index(self.country)]) + API_LOGIN_PATH, Param)
-            self.update_config('Token', result['session']['id'])
-            self.update_config('Token_Created', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")))
-            self.update_config('Token_Expires', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = result['session']["expiresIn"])))
+            await self.update_config('Token', result['session']['id'])
+            await self.update_config('Token_Created', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")))
+            await self.update_config('Token_Expires', str(datetime.strptime(result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = result['session']["expiresIn"])))
             _LOGGER.debug("Update token for %s success", self.username)
             return True
         except ValueError as error:
