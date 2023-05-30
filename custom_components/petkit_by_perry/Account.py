@@ -78,8 +78,8 @@ class Account:
         }
         data_template[item] = val
         if self.hass.config_entries.async_update_entry(self.config, data=data_template) is True:
-            await self.hass.config_entries.async_reload(self._config.get('Username').lower())
-            self.config = self.hass.config_entries.async_get_entry(self._config.get('Username').lower())
+            await self.hass.config_entries.async_reload(self._config.unique_id)
+            self.config = self.hass.config_entries.async_get_entry(self._config.unique_id)
             self._config = self.config.data
             if self._config.get(item) == val:
                 _LOGGER.debug("Update config for %s success", item)
