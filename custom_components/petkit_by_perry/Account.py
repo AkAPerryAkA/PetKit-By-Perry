@@ -79,6 +79,7 @@ class Account:
         data_template[item] = val
         if self.hass.config_entries.async_update_entry(self.config, data=data_template) is True:
             _LOGGER.debug("Update config for %s success", item)
+            self.config = await self.hass.config_entries.async_get_entry(self._config['Username'].lower())
         else:
             _LOGGER.debug("Update config for %s failed", item)
     
