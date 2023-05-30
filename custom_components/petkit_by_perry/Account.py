@@ -77,7 +77,7 @@ class Account:
             "Token_Expires": self._config['Token_Expires']
         }
         data_template[item] = val
-        if await self.hass.config_entries.async_update_entry(self.config, data=data_template) is True:
+        if (await self.hass.config_entries.async_update_entry(self.config, data=data_template)) is True:
             _LOGGER.debug("Update config for %s success", item)
         else:
             _LOGGER.debug("Update config for %s failed", item)
