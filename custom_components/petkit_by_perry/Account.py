@@ -66,9 +66,18 @@ class Account:
         return self._config.get('Token_Expires')
     
     async def update_config(self, item, val):
-        new_data = self._config
-        new_data[item] = val
-        await self.hass.config_entries.async_update_entry(self.config, data=new_data)
+        data_template = {
+            "UserID": self._config['UserID'],
+            "Username": self._config['Username'],
+            "Password": self._config['Password'],
+            "Country": self._config['Country'],
+            "TimeZone": self._config['TimeZone'],
+            "Token": self._config['Token'],
+            "Token_Created": self._config['Token_Created'],
+            "Token_Expires": self._config['Token_Expires']
+        }
+        data_template[item] = val
+        await self.hass.config_entries.async_update_entry(self.config, data=data_template)
     
     async def update_token(self) -> bool:
         timezone = self.timezone

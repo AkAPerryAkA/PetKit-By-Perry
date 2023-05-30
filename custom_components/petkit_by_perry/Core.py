@@ -55,7 +55,6 @@ async def getAPIToken(Username, Password, Country, TimeZone):
         "Password": Password,
         "Country": Country,
         "TimeZone": str(TimeZone),
-        "API_SERVER": dict(API_SERVERS).get(list(dict(API_COUNTRY).keys())[list(dict(API_COUNTRY).values()).index(Country)]),
         "Token": Result['session']['id'],
         "Token_Created": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ")),
         "Token_Expires": str(datetime.strptime(Result['session']["createdAt"], "%Y-%m-%dT%H:%M:%S.%fZ") + timedelta(seconds = Result['session']["expiresIn"]))
