@@ -1,0 +1,22 @@
+{
+    "config": {
+        "step": {
+            "user": {
+                "title": "PetKit By Perry",
+                "data": {
+                    "username": "Username",
+                    "password": "Password",
+                    "country": "Country",
+                    "timezone": "Timezone"
+                }
+            }
+        },
+        "abort": {
+            "already_configured": "Account is already configured"
+        },
+        "error": {
+            "auth": "incorrect username or password",
+            "err": "An error occured"
+        }
+    }
+}
