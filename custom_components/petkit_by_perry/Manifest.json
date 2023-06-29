@@ -1,0 +1,12 @@
+{
+  "domain": "petkit",
+  "name": "Petkit By Perry",
+  "codeowners": ["@AkAPerryAkA"],
+  "documentation": "https://github.com/AkAPerryAkA/PetKit-By-Perry",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/AkAPerryAkA/PetKit-By-Perry/issues",
+  "requirements": ["Babel==2.12.1"],
+  "version": "0.0.1",
+  "config_flow": true,
+  "loggers": ["custom_components.petkit"]
+}
